@@ -82,11 +82,11 @@ def paso2():
         # ---------------------------------------------------
         # post para guardar la población total por censos
         try:
-            pob_censo1 = float(datos.get("pob_censo1", 0) or 0)
+            pob_censo1 = request.form.get("pob_censo1", 0) or 0
         except (TypeError, ValueError):
             pob_censo1 = 0.0
         try:
-            pob_censo2 = float(datos.get("pob_censo2", 0) or 0)
+            pob_censo1 = request.form.get("pob_censo1", 0) or 0
         except (TypeError, ValueError):
             pob_censo2 = 0.0
         datos["pob_censo1"] = pob_censo1
