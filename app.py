@@ -21,8 +21,8 @@ app.secret_key = os.environ.get("SECRET_KEY", "ac33fb5ng54jhhld7???n33")
 def paso1():
     error = None
     datos = session.get('datos', {
-        'nombre_proyecto': 'Akira Kato',
-        'nombre_colegio': 'Akira Kato',
+        'nombre_proyecto': 'Nombre del Proyecto',
+        'nombre_colegio': 'Nombre del Colegio',
         'nivel': 'Secundaria',
         'radio_influencia': 3,
         'area_distrito': 77.7,
@@ -34,11 +34,13 @@ def paso1():
         "anio_censo1": 2007,
         "anio_censo2": 2017,
         "turnos": 2,
+        "pob_censo1": 0,
+        "pob_censo2": 0,
     })
     if request.method == 'POST':
         for campo in datos.keys():
             if campo in request.form:
-                datos[campo] = request.form.get(campo, '')
+                datos[campo] = request.form.get(campo, "")
         if datos.get("nivel") == "Primaria":
             datos["edades"] = list(range(6, 12))
         else:
@@ -79,8 +81,14 @@ def paso2():
     if request.method == 'POST':
         # ---------------------------------------------------
         # post para guardar la población total por censos
-        pob_censo1 = int(request.form.get("pob_censo1", 478278)) or 0
-        pob_censo2 = int(request.form.get("pob_censo2", 624172)) or 0
+        try:
+            pob_censo1 = float(datos.get("pob_censo1", 0) or 0)
+        except (TypeError, ValueError):
+            pob_censo1 = 0.0
+        try:
+            pob_censo2 = float(datos.get("pob_censo2", 0) or 0)
+        except (TypeError, ValueError):
+            pob_censo2 = 0.0
         datos["pob_censo1"] = pob_censo1
         datos["pob_censo2"] = pob_censo2
         # ---------------------------------------------------
@@ -89,7 +97,10 @@ def paso2():
         for anio in [anio_censo1, anio_censo2]:
             dic_pop_edad_[anio] = {}
             for edad in edades:
-                valor = int(request.form.get(f'pop_byedad{anio}_{edad}', 0))
+                try:
+                    valor = int(request.form.get(f'pop_byedad{anio}_{edad}', 0) or 0)
+                except (TypeError, ValueError):
+                    valor = 0
                 datos[f"dic_pop_edad_{anio}_{edad}"] = valor
                 dic_pop_edad_[int(anio)][int(edad)] = valor
         datos["dic_pop_edad"] = dic_pop_edad_
@@ -98,7 +109,10 @@ def paso2():
         for anio in anios_hist:
             dic_mat_by_anio_[anio] = {}
             for edad in edades:
-                valor = int(request.form.get(f'matricula_{anio}_{edad}', 0))
+                try:
+                    valor = int(request.form.get(f'matricula_{anio}_{edad}', 0) or 0)
+                except (TypeError, ValueError):
+                    valor = 0
                 datos[f"dic_mat_by_anio_{anio}_{edad}"] = valor
                 dic_mat_by_anio_[anio][edad] = valor
         datos["dic_mat_by_anio"] = dic_mat_by_anio_
@@ -107,7 +121,10 @@ def paso2():
         for anio in anios_hist:
             dic_no_promv_[anio] = {}
             for edad in edades:
-                valor = int(request.form.get(f'noprom_{anio}_{edad}', 0))
+                try:
+                    valor = int(request.form.get(f'noprom_{anio}_{edad}', 0) or 0)
+                except (TypeError, ValueError):
+                    valor = 0
                 datos[f"dic_no_promv_{anio}_{edad}"] = valor
                 dic_no_promv_[int(anio)][int(edad)] = valor
         datos["dic_no_promv"] = dic_no_promv_
@@ -146,14 +163,14 @@ def paso3():
     anio_f = datos.get("anio_f")
     anio_censo1 = int(datos.get("anio_censo1"))
     anio_censo2 = int(datos.get("anio_censo2"))
-    pob_censo1 = int(datos.get("pob_censo1"))
-    pob_censo2 = int(datos.get("pob_censo2"))
+    pob_censo1 = float(datos.get("pob_censo1", 0)) if datos.get("pob_censo1") is not None else 0
+    pob_censo2 = float(datos.get("pob_censo2", 0)) if datos.get("pob_censo2") is not None else 0
     anios_proy = list(range(anio_form - cnt_anio_mat, anio_f + 1))
     anios_hist = list(range(anio_form - cnt_anio_mat, anio_form))
     anio_i = int(datos.get("anio_i"))
     anio_f = int(datos.get("anio_f"))
     r = float(datos.get("radio_influencia"))
-    area = float(datos.get("area_distrito"))
+    area = float(datos.get("area_distrito", 0)) or 1  # Evitar división por cero
     dic_mat_by_anio = datos.get("dic_mat_by_anio", {})
     dic_no_promv = datos.get("dic_no_promv", {})
     edades = datos.get("edades", [])
@@ -161,7 +178,7 @@ def paso3():
     # CÁLCULO DE LA POBLACIÓN TOTAL
     ###################################
     dic_pob_total_ = {}
-    tasa_poptotal = (pob_censo2 / pob_censo1) ** (1 / (anio_censo2 - anio_censo1)) - 1
+    tasa_poptotal = (pob_censo2 / pob_censo1) ** (1 / (anio_censo2 - anio_censo1)) - 1 if pob_censo1 > 0 and pob_censo2 > 0 else 0
     for anio in anios_proy:
         if pob_censo2:
             dic_pob_total_[anio] = int(pob_censo2 * (1 + tasa_poptotal) ** (anio - anio_censo2))
@@ -264,7 +281,17 @@ def paso3():
     # redondeando los valores
     for a in anio_proy:
         for e in edades:
-            pop_efec_sp[str(e)][str(a)] = round(pop_efec_sp[str(e)][str(a)])
+            if pop_efec_sp[str(e)].get(str(a)) is None:
+                pop_efec_sp[str(e)][str(a)] = 0
+            else:
+                pop_efec_sp[str(e)][str(a)] = pop_efec_sp[str(e)][str(a)]
+    for a in anio_proy:
+        for e in edades:
+            try:
+                valor = pop_efec_sp[str(e)][str(a)]
+                pop_efec_sp[str(e)][str(a)] = round(float(valor) if valor not in [None, ""] else 0)
+            except (TypeError, ValueError):
+                pop_efec_sp[str(e)][str(a)] = 0
     datos["pop_efec_sp"] = pop_efec_sp
     ###################################
     # CÁLCULO DE LA EFECTIVA CON PROYECTO
@@ -299,11 +326,22 @@ def paso3():
                 if e == e_min:
                     pop_efec_cp[str(e)][str(a)] = dic_pop_potencial[str(e)][str(a)] * tasas_cp[str(e)]
                 else:
-                    pop_efec_cp[str(e)][str(a)] = pop_efec_cp[str(e-1)][str(a-1)]
-    # redondeando los valores
+                    try:
+                        pop_efec_cp[str(e)][str(a)] = pop_efec_cp[str(e-1)][str(a-1)] * tasas_cp[str(e)]
+                    except KeyError:
+                        pop_efec_cp[str(e)][str(a)] = 0
     for a in anio_proy:
         for e in edades:
-            pop_efec_cp[str(e)][str(a)] = round(pop_efec_cp[str(e)][str(a)])
+            if pop_efec_cp[str(e)].get(str(a)) is None:
+                pop_efec_cp[str(e)][str(a)] = 0
+            else:
+                pass
+    try:
+        valor = pop_efec_cp[str(e)][str(a)]
+        pop_efec_cp[str(e)][str(a)] = round(float(valor) if valor not in [None, ""] else 0)
+    except (TypeError, ValueError):
+        pop_efec_cp[str(e)][str(a)] = 0    
+
     datos["pop_efec_cp"] = pop_efec_cp
 
     ##################################
@@ -317,15 +355,18 @@ def paso3():
         # Calcula el máximo de aulas necesarias para esa edad
         lista = []
         for a in anio_proy:
-            valor = pop_efec_cp[str(e)][str(a)] / (datos.get("est_by_aula", 30))
-            lista.append(math.ceil(valor)) # Redondea hacia arriba
+            try:
+                valor = pop_efec_cp[str(e)][str(a)] / (datos.get("est_by_aula", 30) if datos.get("est_by_aula", 30) > 0 else 30)
+            except (TypeError, ValueError):
+                valor = 0
+            lista.append(valor) # Redondea hacia arriba
         max_aulas = max(lista)
         max_aulas_by_edad[str(e)] = max_aulas
 
         # Distribuye las aulas entre los turnos
         dic_aulas = {}
-        base = max_aulas // turnos
-        resto = max_aulas % turnos
+        base = max_aulas // turnos if turnos > 0 else max_aulas
+        resto = max_aulas % turnos if turnos > 0 else 0
         for t in range(1, turnos + 1):
             dic_aulas[f'aulas_t{t}'] = base + (1 if t <= resto else 0)
         aulas_necesarias_by_turno[str(e)] = dic_aulas
@@ -334,7 +375,7 @@ def paso3():
     aulas_necesarias_by_edad = {}
     for e in edades:
         aulas_por_turno = aulas_necesarias_by_turno[str(e)]
-        max_aulas_turno = max(aulas_por_turno.values())
+        max_aulas_turno = max(aulas_por_turno.values()) if aulas_por_turno else 0
         aulas_necesarias_by_edad[str(e)] = max_aulas_turno
 
     datos["aulas_necesarias_by_edad"] = aulas_necesarias_by_edad
