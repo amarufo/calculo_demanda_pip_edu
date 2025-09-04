@@ -178,7 +178,10 @@ def paso3():
     # CÁLCULO DE LA POBLACIÓN TOTAL
     ###################################
     dic_pob_total_ = {}
-    tasa_poptotal = (pob_censo2 / pob_censo1) ** (1 / (anio_censo2 - anio_censo1)) - 1 if pob_censo1 > 0 and pob_censo2 > 0 else 0
+    try:
+        tasa_poptotal = (pob_censo2 / pob_censo1) ** (1 / (anio_censo2 - anio_censo1)) - 1 
+    except (ZeroDivisionError, TypeError):
+        tasa_poptotal = 0
     for anio in anios_proy:
         if pob_censo2:
             dic_pob_total_[anio] = int(pob_censo2 * (1 + tasa_poptotal) ** (anio - anio_censo2))
