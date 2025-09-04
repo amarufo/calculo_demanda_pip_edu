@@ -28,11 +28,11 @@
                 <label for="area_distrito">Área del distrito (KM²):</label>
                 <input type="number" name="area_distrito" id="area_distrito" required step="any" value="{{ datos['area_distrito'] }}">
 
-                <label for="nivel">Estudiantes por aula:</label>
-                <input type="number" name="est_by_aula" id="est_by_aula" value="{{ datos['est_by_aula'] }}">
+                <label for="est_by_aula">Estudiantes por aula:</label>
+                <input type="number" name="est_by_aula" id="est_by_aula" required value="{{ datos['est_by_aula'] }}">
 
-                <label for="nivel">Cantidad de turnos de funcionamiento del servicio:</label>
-                <input type="number" name="turnos" id="turnos" value="{{ datos['turnos'] }}">
+                <label for="turnos">Cantidad de turnos de funcionamiento del servicio:</label>
+                <input type="number" name="turnos" id="turnos" required value="{{ datos['turnos'] }}">
 
                 <label for="anio_form">Año de formulación:</label>
                 <input type="number" name="anio_form" id="anio_form" required value="{{ datos['anio_form'] }}">
@@ -46,11 +46,11 @@
                 <label for="anio_f">Fin de funcionamiento (año):</label>
                 <input type="number" name="anio_f" id="anio_f" required value="{{ datos['anio_f'] }}">
 
-                <label for="censo_1">Año del primer censo:</label>
-                <input type="number" name="anio_censo1" id="censo_1" required value="{{ datos['anio_censo1'] }}">
+                <label for="anio_censo1">Año del primer censo:</label>
+                <input type="number" name="anio_censo1" id="anio_censo1" required value="{{ datos['anio_censo1'] }}">
 
-                <label for="censo_2">Año del segundo censo:</label>
-                <input type="number" name="anio_censo2" id="censo_2" required value="{{ datos['anio_censo2'] }}">
+                <label for="anio_censo2">Año del segundo censo:</label>
+                <input type="number" name="anio_censo2" id="anio_censo2" required value="{{ datos['anio_censo2'] }}">
             </div>
             <div class="form-group" style="text-align: center;">
                 <button type="submit" class="proyec-btn">Guardar</button>

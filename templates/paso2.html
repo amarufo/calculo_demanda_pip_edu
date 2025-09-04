@@ -8,11 +8,14 @@
 </head>
 <body>
     <div class="columna">             
+        <div>
+            {{ datos["pob_censo1"] }}
+        </div>
         <form method="post" class="proyec-form">               
             <h3 class="proyec-title">Ingreso de datos de población, matrícula y no promovidos</h3>            
             <div class="form-group">
-                <label for="pob_censo1">Población total del distrito en el año {{ datos['anio_censo1'] }} : <input type="number" name="pob_censo1" id="pob_censo1" required value="{{ datos['pob_censo1'] }}"></label>
-                <label for="pob_censo2">Población total del distrito en el año {{ datos['anio_censo2'] }} : <input type="number" name="pob_censo2" id="pob_censo2" required value="{{ datos['pob_censo2'] }}"></label>
+                <label for="pob_censo1">Población total del distrito en el año {{ datos['anio_censo1'] }} : <input type="number" name="pob_censo1" id="pob_censo1" value="{{ datos['pob_censo1'] }}"></label>
+                <label for="pob_censo2">Población total del distrito en el año {{ datos['anio_censo2'] }} : <input type="number" name="pob_censo2" id="pob_censo2" value="{{ datos['pob_censo2'] }}"></label>
             </div>            
             <h4 class="proyec-title2">Población total por edades en el distrito en el nivel {{ datos["nivel"] }}</h4>
             <table>
