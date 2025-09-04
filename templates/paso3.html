@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Informe de Proyección Poblacional</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin-plot/build/Chart.BoxPlot.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+          font-family: 'Roboto', Arial, sans-serif;
+          background: linear-gradient(135deg, #f7f7f7 70%, #f7e5e5 100%);
+          color: #232323;
+          margin: 0;
+        }
+        .columna {
+          background: #fff;
+          border-radius: 18px;
+          position: center;
+          justify-content: center;
+          align-items: center;          
+          box-shadow: 0 8px 24px #b91c1c22;
+          min-width: 78vw;
+          max-width: 78vw;
+          padding: 32px;
+          box-sizing: border-box;
+          margin-left: 150px;
+          overflow-y: visible;
+          display: flex;
+          flex-direction: column;
+          gap: 1.7em;
+        }
+        .proyec-title {
+          font-family: 'Montserrat', Arial, sans-serif;
+          font-size: 1.2rem;
+          color: #b91c1c;
+          margin-bottom: 1.1em;
+          background: linear-gradient(90deg,#f7e5e5 80%,#fff 100%);
+          border-radius: 12px;
+          padding: 0.7em 0.2em;
+          text-align: center;
+          letter-spacing: 0.05em;
+          box-shadow: 0 1px 6px #b91c1c22;
+        }
+        .mini-row {
+          display: flex;
+          flex-direction: row;
+          align-items: stretch;
+          gap: 1.2em;
+          margin-bottom: 1.3em;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+        .mini-card {
+          background: #fff;
+          border-radius: 14px;
+          box-shadow: 0 2px 8px #b91c1c22;
+          padding: 1.1em 1.2em;
+          font-size: 1em;
+          min-width: 200px;
+          max-width: 240px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          transition: box-shadow 0.2s;
+        }
+        .mini-card:hover {
+          box-shadow: 0 6px 16px #b91c1c33;
+        }
+        .mini-card-title {
+          font-family: 'Montserrat', Arial, sans-serif;
+          font-weight: 700;
+          color: #b91c1c;
+          margin-bottom: 0.4em;
+          font-size: 0.7em;
+          text-align: center;
+          letter-spacing: 0.01em;
+        }
+        .mini-card-value {
+          font-size: 1.2em;
+          color: #232323;
+          font-weight: 700;
+          margin-bottom: 0.4em;
+        }
+        .mini-card table {
+          font-size: 0.92em;
+          margin-bottom: 0;
+        }
+        .mini-card th {
+          background: #e6d3d3;
+          color: #b91c1c;
+          font-weight: 600;
+          border-radius: 4px;
+          font-size: 0.92em;
+        }
+        .mini-card td {
+          background: #faf7f7;
+          font-size: 0.92em;
+        }
+        .tarjeta {
+          background: #f7e5e5;
+          border-radius: 14px;
+          box-shadow: 0 2px 10px #b91c1c18;
+          padding: 1.2em 1.6em;
+          margin-bottom: 0.7em;
+          display: flex;
+          flex-direction: column;
+          gap: 0.3em;
+          font-size: 1em;
+        }
+        .tarjeta strong {
+          color: #b91c1c;
+        }
+        .tarjeta-param {
+          background: #fdf6f6;
+        }
+        .proyec-table-title {
+          font-family: 'Montserrat', Arial, sans-serif;
+          color: #b91c1c;
+          margin-bottom: 0.5em;
+          font-size: 1.2em;
+          font-weight: 700;
+          letter-spacing: 0.01em;
+          text-align: center;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          background: #fff;
+          margin-bottom: 1em;
+          font-size: 1em;
+        }
+        th, td {
+            padding: 0.36em 0.5em;
+            text-align: center;
+            border-bottom: 1px solid #ececec;
+        }
+        th {
+          background: #b91c1c;
+          color: #fff;
+          font-weight: 700;
+        }
+        tr:last-child td {
+          border-bottom: none;
+        }
+        tr:hover td {
+          background: #f6e7e7;
+        }
+        .grafico-container, .grafico-matricula-container {
+          background: #fff;
+          border-radius: 13px;
+          box-shadow: 0 2px 12px #b91c1c22;
+          padding: 1.3em;
+          margin-bottom: 0em;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-items: center;
+        }
+        .grafico-matricula-container {
+          min-height: 320px;
+        }
+        canvas {
+          border-radius: 10px;
+          background: #fcfcfc;
+          width: 100% !important;
+          max-width: 100% !important;
+          min-height: 200px !important;
+          height: 320px !important;
+          display: block;
+        }
+        .proyec-btn {
+          padding: 13px 28px;
+          background: linear-gradient(90deg,#b91c1c 80%,#f59e42 100%);
+          color: #fff;
+          border: none;
+          border-radius: 11px;
+          font-size: 1em;
+          font-weight: 700;
+          cursor: pointer;
+          margin-top: 1.7em;
+          margin-bottom: 0.8em;
+          transition: background 0.18s;
+          align-self: flex-end;
+          box-shadow: 0 2px 12px #b91c1c33;
+          letter-spacing: 0.02em;
+        }
+        .proyec-btn:hover {
+          background: linear-gradient(90deg,#7d1010 80%,#fbbf24 100%);
+        }
+        @media (max-width: 1200px) {
+          .columna {
+            min-width: 99vw;
+            max-width: 99vw;
+            padding: 12px 2vw 8px 2vw;
+          }
+          .mini-row {
+            flex-direction: column;
+            gap: 0.7em;
+          }
+        }
+        @media (max-width: 700px) {
+          .proyec-title { font-size: 1.2rem; }
+          .columna { padding: 2vw; }
+        }
+    </style>
+</head>
+<body>
+    <div class="columna" id="informe-columna">
+        <h2 class="proyec-title">CÁLCULO DE DEMANDA EDUCATIVA <br> Colegio: {{ datos['nombre_colegio'] }}</h2>
+
+        <div style="display:flex; gap:1vw; flex-wrap:wrap; justify-content:space-between;">
+            <div class="tarjeta" style="flex:1; min-width:620px;">
+                <strong>Nombre del proyecto:</strong> {{ datos['nombre_proyecto'] }}<br>
+                <strong>Institución Educativa:</strong> {{ datos['nombre_colegio'] }}<br>
+                <strong>Nivel:</strong> {{ datos['nivel'] }}<br>
+                <strong>Año de Formulación:</strong> {{ datos['anio_form'] }}<br>
+                <strong>Año de inicio de funcionamiento del proyecto:</strong> {{ datos['anio_i'] }}<br>
+                <strong>Año final de funcionamiento del proyecto:</strong> {{ datos['anio_f'] }}<br>
+                <strong>Años de disponibilidad de datos de matrícula:</strong> {{ datos['anios_hist'] }}<br>
+            </div>
+            <div class="tarjeta" style="flex:1; min-width:220px;">
+                <strong>Edades / grados:</strong> {{ datos['edades'] }} <br>
+                <strong>Radio de influencia:</strong> {{ datos['radio_influencia'] }} km<br>
+                <strong>Área del distrito:</strong> {{ datos['area_distrito'] }} km²<br>
+                <strong>Estudiantes por aula:</strong> {{ datos['est_by_aula'] }}<br>
+                <strong>Turnos:</strong> {{ datos['turnos'] }}<br>
+                <strong>Área de influencia:</strong> {{ datos['area_influencia'] }} km²<br>
+                <strong>Años de censos poblacionales:</strong> {{ datos['anio_censo1'] }} - {{ datos['anio_censo2'] }}<br>
+            </div>
+        </div>        
+        <div class="mini-row">
+            <div>
+                <div class="mini-card-title">Promedio de la tasa de crecimiento distrital por departamento</div>
+                <div class="mini-card-title">Tasa crecimiento del distrito del proyecto =  {{ (datos['tasa_poptotal'] * 100) | round(2) }}%</div>
+                <canvas id="graficoTicDist" width="450" height="auto"></canvas>
+            </div>     
+            <div class="mini-card">
+                <div class="mini-card-title">Tasa de crecimiento por edad</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Edad</th>
+                            <th>Tasa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for edad, tasa in datos['tasa_by_edad'].items() %}
+                        <tr>
+                            <td>{{ edad }}</td>
+                            <td>{{ (tasa * 100) | round(2) }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="mini-card">
+                <div class="mini-card-title">Proporción de los matriculados en la IE sobre la población potencial</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Edad</th>
+                            <th>Proporción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for edad, tasa in datos['tasa_proporcion'].items() %}
+                        <tr>
+                            <td>{{ edad }}</td>
+                            <td>{{ (tasa * 100) | round(2) }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="mini-card">
+                <div class="mini-card-title">Tasa de transición de un grado menor al siguiente: </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Edad</th>
+                            <th>Tasa</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for edad, tasa in datos['tasa_transicion'].items() %}
+                        <tr>
+                            <td>{{ edad }}</td>
+                            <td>{{ (tasa * 100) | round(2) }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tarjeta tarjeta-param" style="width: 70%;">
+            <div class="proyec-table-title">Evolución histórica de la matrícula por edad/grado y año</div>
+            <div class="grafico-matricula-container">
+                <canvas id="graficoMatricula" height="auto"></canvas>
+            </div>
+        </div>
+        <div class="tarjeta tarjeta-param" style="width: 70%;">
+            <div class="proyec-table-title">Proyección de población total</div>
+            <div class="grafico-matricula-container">
+                <canvas id="graficoPopTotal" height="auto"></canvas>
+            </div>
+        </div>
+        <div class="tarjeta tarjeta-param" style="width: 70%;">
+            <div class="proyec-table-title">Proyección de población referencial</div>
+            <div class="grafico-matricula-container">
+                <canvas id="graficoPobRef" height="auto"></canvas>
+            </div>
+        </div>                
+        <div class="tarjeta tarjeta-param" style="width: 70%;">
+            <div class="proyec-table-title">Proyección de población potencial</div>
+            <div class="grafico-container">
+                <canvas id="graficoPopPotencial" height="auto"></canvas>
+            </div>
+        </div>
+        <div class="tarjeta tarjeta-param" style="width: 70%;">
+            <div class="proyec-table-title">Proyección de la población efectiva SIN PROYECTO</div>
+            <div class="grafico-container">
+                <canvas id="graficoPopEfecSP" height="auto"></canvas>
+            </div>
+        </div>
+        <div class="tarjeta tarjeta-param" style="width: 70%;">
+            <div class="proyec-table-title">Proyección de la población efectiva CON PROYECTO / POBLACIÓN OBJETIVO</div>
+            <div class="grafico-container">
+                <canvas id="graficoPopEfecCP" height="auto"></canvas>
+            </div>
+        </div>
+        <div class="tarjeta tarjeta-param" style="width: 70%;">
+            <div class="proyec-table-title">Cantidad de aulas necesarias por edad / grado en el Horizonte de Evaluación del Proyecto de Inversión</div>
+            <table>
+                <head>
+                    <tr>
+                        <th>Edad / Grado</th>
+                        {% for t in datos['list_turnos'] %}
+                            <th>Turno {{ t }}</th>
+                        {% endfor %}
+                        <th>Aulas necesarias</th>
+                    </tr>
+                </head>
+                <body>
+                    {% for edad, aulas in datos['aulas_necesarias_by_turno'].items() %}
+                    <tr>
+                        <td>{{ edad }}</td>
+                        {% for r in datos['list_turnos'] %}
+                            <td>{{ aulas['aulas_t' ~ r] }}</td>
+                        {% endfor %}
+                        <td>{{ aulas['aulas_t1'] }}</td>
+                    </tr>
+                    {% endfor %}
+            </table>
+        </div>        
+    </div>
+    <script>
+        // Chart.js datalabels global config
+        Chart.register(window.ChartDataLabels);
+        Chart.defaults.set('plugins.datalabels', {
+            display: true,
+            color: 'black',
+            anchor: 'end',
+            align: 'start',
+            font: { weight: 'bold', size: 15 },
+            formatter: function(value) {
+                if (typeof value === 'number') return value.toLocaleString();
+                return value;
+            }
+        });
+
+        // Paleta de colores
+        const colores = [
+            '#b91c1c', '#f59e42', '#3b82f6', '#10b981', '#6366f1',
+            '#fbbf24', '#ef4444', '#7c3aed', '#06b6d4', '#a78bfa'
+        ];
+
+        // --- Matrícula histórica ---
+        {
+            const dicMatByAnio = {{ datos['dic_mat_by_anio'] | tojson }};
+            const aniosMat = Object.keys(dicMatByAnio);
+            const edadesMat = Array.from(
+                new Set(aniosMat.flatMap(anio => Object.keys(dicMatByAnio[anio])))
+            ).sort();
+            const datasetsMatricula = edadesMat.map((edad, idx) => ({
+                label: `Edad/Grado ${edad}`,
+                data: aniosMat.map(anio => dicMatByAnio[anio][edad] || 0),
+                backgroundColor: colores[idx % colores.length]
+            }));
+
+            new Chart(document.getElementById('graficoMatricula').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: aniosMat,
+                    datasets: datasetsMatricula
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        tooltip: { enabled: true },
+                        datalabels: {
+                            color: 'white',
+                            font: { weight: 'bold', size: 14 },
+                            formatter: function(value) {
+                                if (typeof value === 'number') return value.toLocaleString();
+                                return value;
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Año' }, stacked: true },
+                        y: { title: { display: true, text: 'Cantidad de estudiantes' }, stacked: true }
+                    }
+                }
+            });
+        }
+
+        // --- Población total ---
+        {
+            const dicPopTotal = {{ datos['dic_pop_total'] | tojson }};
+            const popTotalLabels = Object.keys(dicPopTotal);
+            const popTotalData = Object.values(dicPopTotal);
+
+            new Chart(document.getElementById('graficoPopTotal').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: popTotalLabels,
+                    datasets: [{
+                        label: 'Población Total',
+                        data: popTotalData,
+                        backgroundColor: colores[0]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: true },
+                        datalabels: {
+                            color: 'white',
+                            rotation: -90,
+                            font: { weight: 'bold', size: 15 },
+                            formatter: function(value) {
+                                if (typeof value === 'number') return value.toLocaleString();
+                                return value;
+                            },
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Año' } },
+                        y: { title: { display: true, text: 'Población Total' } }
+                    }
+                }
+            });
+        }
+
+        // --- Población referencial ---
+        {
+            const dicPobRef = {{ datos['dic_pob_ref'] | tojson }};
+            const pobRefLabels = Object.keys(dicPobRef);
+            const pobRefData = Object.values(dicPobRef);
+
+            new Chart(document.getElementById('graficoPobRef').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: pobRefLabels,
+                    datasets: [{
+                        label: 'Población Referencial',
+                        data: pobRefData,
+                        backgroundColor: colores[2]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: true },
+                        datalabels: {
+                            color: 'white',
+                            rotation: -90,
+                            font: { weight: 'bold', size: 15 },
+                            formatter: function(value) {
+                                if (typeof value === 'number') return value.toLocaleString();
+                                return value;
+                            },
+                        }                        
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Año' } },
+                        y: { title: { display: true, text: 'Población Referencial' } }
+                    }
+                }
+            });
+        }
+
+        // --- Población potencial por edad ---
+        {
+            const dicPopPotencial = {{ datos['dic_pop_potencial'] | tojson }};
+            const edadesPotencial = Object.keys(dicPopPotencial).sort();
+            const aniosPotencial = Object.keys(dicPopPotencial[edadesPotencial[0]]);
+            const datasetsPotencial = edadesPotencial.map((edad, idx) => ({
+                label: `Edad ${edad}`,
+                data: aniosPotencial.map(anio => dicPopPotencial[edad][anio] || 0),
+                backgroundColor: colores[idx % colores.length]
+            }));
+
+            new Chart(document.getElementById('graficoPopPotencial').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: aniosPotencial,
+                    datasets: datasetsPotencial
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        tooltip: { enabled: true },
+                        datalabels: {
+                            color: 'white',
+                            font: { weight: 'bold', size: 11 },
+                            formatter: function(value) {
+                                if (typeof value === 'number') return value.toLocaleString();
+                                return value;
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Año' }, stacked: true },
+                        y: { title: { display: true, text: 'Población Potencial' }, stacked: true }
+                    }
+                }
+            });
+        }
+
+        // --- Población efectiva SP ---
+        {
+            const popEfecSP = {{ datos['pop_efec_sp'] | tojson }};
+            const edadesEfecSP = Object.keys(popEfecSP).sort();
+            const aniosEfecSP = Object.keys(popEfecSP[edadesEfecSP[0]]);
+            const datasetsEfecSP = edadesEfecSP.map((edad, idx) => ({
+                label: `Edad ${edad}`,
+                data: aniosEfecSP.map(anio => popEfecSP[edad][anio] || 0),
+                backgroundColor: colores[idx % colores.length]
+            }));
+
+            new Chart(document.getElementById('graficoPopEfecSP').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: aniosEfecSP,
+                    datasets: datasetsEfecSP
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        tooltip: { enabled: true },
+                        datalabels: {
+                            color: 'white',
+                            font: { weight: 'bold', size: 14 },
+                            formatter: function(value) {
+                                if (typeof value === 'number') return value.toLocaleString();
+                                return value;
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Año' }, stacked: true },
+                        y: { title: { display: true, text: 'Población Efectiva SP' }, stacked: true }
+                    }
+                }
+            });
+        }
+        // --- Promedio de la tasa de crecimiento distrital por departamento ---
+        {
+            const ticDistByDep = {{ datos['tic_dist_by_dep'] | tojson }};
+            const labels = Object.keys(ticDistByDep);
+            const data = labels.map(dep => ticDistByDep[dep].tic_dist);
+
+            // Detecta el índice de "TU PROYECTO"
+            const idxProyecto = labels.indexOf("TU PROYECTO");
+
+            // Colores: todos grises, "TU PROYECTO" rojo
+            const colors = labels.map((dep, i) => i === idxProyecto ? "#b91c1c" : "#888");
+
+            new Chart(document.getElementById('graficoTicDist'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Tasa de crecimiento',
+                        data: data,
+                        backgroundColor: colors,
+                        borderColor: colors,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {display: false},
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + (context.parsed.y * 100).toFixed(2) + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Departamento' }, ticks: { autoSkip: false, maxRotation: 90, minRotation: 45 } },
+                        y: { title: { display: true, text: 'Tasa de crecimiento' }, ticks: { callback: v => (v * 100).toFixed(2) + '%' } }
+                    }
+                }
+            });            
+        }
+
+        // --- Población efectiva CP ---
+        {
+            const popEfecCP = {{ datos['pop_efec_cp'] | tojson }};
+            const edadesEfecCP = Object.keys(popEfecCP).sort();
+            const aniosEfecCP = Object.keys(popEfecCP[edadesEfecCP[0]]);
+            const datasetsEfecCP = edadesEfecCP.map((edad, idx) => ({
+                label: `Edad ${edad}`,
+                data: aniosEfecCP.map(anio => popEfecCP[edad][anio] || 0),
+                backgroundColor: colores[idx % colores.length]
+            }));
+
+            new Chart(document.getElementById('graficoPopEfecCP').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: aniosEfecCP,
+                    datasets: datasetsEfecCP
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: 'top' },
+                        tooltip: { enabled: true },
+                        datalabels: {
+                            color: 'white',
+                            font: { weight: 'bold', size: 14 },
+                            formatter: function(value) {
+                                if (typeof value === 'number') return value.toLocaleString();
+                                return value;
+                            }
+                        }                                                
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Año' }, stacked: true },
+                        y: { title: { display: true, text: 'Población Efectiva CP' }, stacked: true }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Población, matrícula y no promovidos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="columna">             
+        <form method="post" class="proyec-form">               
+            <h3 class="proyec-title">Ingreso de datos de población, matrícula y no promovidos</h3>            
+            <div class="form-group">
+                <label for="pob_censo1">Población total del distrito en el año {{ datos['anio_censo1'] }} : <input type="number" name="pob_censo1" id="pob_censo1" required value="{{ datos['pob_censo1'] }}"></label>
+                <label for="pob_censo2">Población total del distrito en el año {{ datos['anio_censo2'] }} : <input type="number" name="pob_censo2" id="pob_censo2" required value="{{ datos['pob_censo2'] }}"></label>
+            </div>            
+            <h4 class="proyec-title2">Población total por edades en el distrito en el nivel {{ datos["nivel"] }}</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Edad</th>
+                        <th>{{ datos['anio_censo1'] }}</th>
+                        <th>{{ datos['anio_censo2'] }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for edad in datos["edades"] %}    
+                        <tr>
+                        <td>{{ edad }}</td>
+                        {% for anio in [datos['anio_censo1'], datos['anio_censo2']] %}
+                        <td><input type="number" name="pop_byedad{{anio}}_{{edad}}" value="{{ datos['dic_pop_edad_' ~ anio ~ '_' ~ edad] }}"></td>
+                        {% endfor %}
+                        </tr>
+                    {% endfor %}    
+                </tbody>
+            </table>       
+            <h4 class="proyec-title2">Número de matriculados por grado/edad en los últimos {{ datos["cantidad_anios_matricula"] }} años</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Edad</th>
+                        {% for a in datos["anios_hist"] %}
+                            <th>{{ a }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for edad in datos["edades"] %}
+                        <tr>
+                            <td>{{ edad }}</td>
+                            {% for anio in datos["anios_hist"] %}
+                                <td><input type="number" name="matricula_{{ anio }}_{{ edad }}" value="{{ datos['dic_mat_by_anio_' ~ anio ~ '_' ~ edad] }}"></td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h4 class="proyec-title2">Número de no promovidos por grado/edad en los últimos {{ datos["cantidad_anios_matricula"] }} años</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Edad</th>
+                        {% for a in datos["anios_hist"] %}
+                            <th>{{ a }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for edad in datos["edades"] %}
+                        <tr>
+                            <td>{{ edad }}</td>
+                            {% for anio in datos["anios_hist"] %}
+                                <td><input type="number" name="noprom_{{ anio }}_{{ edad }}" value="{{ datos['dic_no_promv_' ~ anio ~ '_' ~ edad] }}"></td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>            
+            <div class="form-group" style="text-align: center;">
+                <button type="submit" class="proyec-btn">Guardar</button>
+            </div>                 
+        </form>
+        <div class="form-group" style="text-align: center;">
+            <a href="{{ url_for('paso1') }}" class="proyec-btn" style="background:#aaa; min-width: 40%;"> ⬅⬅ Regresar</a>  
+            <a href="{{ url_for('paso3') }}" class="proyec-btn" style="background:#aaa; min-width: 40%;">Siguiente paso ➡➡</a>                
+        </div>               
+        {% if error %}
+            <div class="proyec-error">{{ error }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>

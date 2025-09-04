@@ -1,0 +1,131 @@
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f7f7f7;
+    color: #333;
+    margin: 0;
+    display: flex;
+    justify-content: center; /* centra horizontalmente */
+    align-items: flex-start;  /* puedes usar center si quieres también vertical */
+}
+
+.columna {
+    align-self: center;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px #b91c1c22;
+    min-width: 700px;
+    max-width: 75dvw;
+    height: 100vh;
+    padding: 10px 10px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.proyec-title {
+    justify-self: center;
+    font-size: 1rem;
+    color: #fff;
+    margin-bottom: 0.7em;
+    background: #b91c1c;
+    border-radius: 4px;
+    padding: 0.3em;
+    text-align: center;
+}
+.proyec-title2 {
+    font-size: 0.9rem;
+    color: #b91c1c;
+    margin-bottom: 0.2em;
+    border-radius: 4px;
+    padding: 0.3em;
+    text-align: left;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5em;
+}
+.form-group label {
+  color: #b91c1c;
+  font-size: 0.8em;
+  margin-bottom: 0.2em;
+}
+.form-group input,
+.form-group select {
+  padding: 5px 5px;
+  font-size: 0.8rem;
+  border: 1px solid #e0cccc;
+  border-radius: 5px;
+  background: #fdf6f6;
+  outline: none;
+}
+
+.proyec-btn {
+  padding: 5px 5px;
+  background: #b91c1c;
+  color: #fff;
+  border: none;
+  border-radius: 2px;
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.1em;
+  transition: background 0.18s;
+}
+.proyec-btn:hover {
+  background: #7d1010;
+}
+
+.proyec-error {
+  color: #b91c1c;
+  background: #fbe7e7;
+  border-radius: 7px;
+  padding: 0.7em 1em;
+  margin-bottom: 1.2em;
+  font-weight: 600;
+  text-align: center;
+}
+
+.proyec-table-title {
+  color: #b15a5a;
+  margin-bottom: 0.7em;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  margin-bottom: 1em;
+}
+/* Controla el ancho de los inputs dentro de las celdas de tabla */
+td input[type="number"] {
+    width: 80px;      /* Cambia el valor según lo que necesites */
+    min-width: 60px;
+    max-width: 120px;
+    text-align: center;
+    padding: 0.2em;
+}
+th, td {
+    min-width: 60px;
+    max-width: 120px;
+    width: 60px;      /* ancho preferido */
+    padding: 0.3em;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+    font-size: 0.8em;
+}
+th {
+  background: #fcbdbda1;
+  color: #000000;
+  font-weight: 600;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+tr:hover td {
+  background: #ffe4e4;
+}
